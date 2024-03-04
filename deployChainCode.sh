@@ -22,11 +22,27 @@ setGlobalsForPeer0Org1() {
     export CORE_PEER_ADDRESS=localhost:7051
 }
 
+setGlobalsForPeer1Org1() {
+    export CORE_PEER_LOCALMSPID="Org1MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG1_CA
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/artifacts/channel/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    export CORE_PEER_ADDRESS=localhost:7061
+
+}
+
 setGlobalsForPeer0Org2() {
     export CORE_PEER_LOCALMSPID="Org2MSP"
     export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG2_CA
     export CORE_PEER_MSPCONFIGPATH=${PWD}/artifacts/channel/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
     export CORE_PEER_ADDRESS=localhost:9051
+
+}
+
+setGlobalsForPeer1Org2() {
+    export CORE_PEER_LOCALMSPID="Org2MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG2_CA
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/artifacts/channel/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+    export CORE_PEER_ADDRESS=localhost:9061
 
 }
 
@@ -52,9 +68,18 @@ installChaincode() {
     peer lifecycle chaincode install ${CC_NAME}.tar.gz
     echo "===================== Chaincode is installed on peer0.org1 ===================== "
 
+    setGlobalsForPeer1Org1
+    peer lifecycle chaincode install ${CC_NAME}.tar.gz
+    echo "===================== Chaincode is installed on peer1.org1 ===================== "
+
     setGlobalsForPeer0Org2
     peer lifecycle chaincode install ${CC_NAME}.tar.gz
     echo "===================== Chaincode is installed on peer0.org2 ===================== "
+
+    setGlobalsForPeer1Org2
+    peer lifecycle chaincode install ${CC_NAME}.tar.gz
+    echo "===================== Chaincode is installed on peer1.org2 ===================== "
+
 }
 
 # installChaincode
@@ -66,6 +91,7 @@ queryInstalled() {
     PACKAGE_ID=$(sed -n "/${CC_NAME}_${VERSION}/{s/^Package ID: //; s/, Label:.*$//; p;}" log.txt)
     echo PackageID is ${PACKAGE_ID}
     echo "===================== Query installed successful on peer0.org1 on channel ===================== "
+
 }
 
 # queryInstalled
@@ -84,16 +110,16 @@ approveForMyOrg1() {
 
 }
 
-getBlock() {
-    setGlobalsForPeer0Org1
-    # peer channel fetch 10 -c mychannel -o localhost:7050 \
-    #     --ordererTLSHostnameOverride orderer.example.com --tls \
-    #     --cafile $ORDERER_CA
+# getBlock() {
+#     setGlobalsForPeer0Org1
+#     # peer channel fetch 10 -c mychannel -o localhost:7050 \
+#     #     --ordererTLSHostnameOverride orderer.example.com --tls \
+#     #     --cafile $ORDERER_CA
 
-    peer channel getinfo  -c mychannel -o localhost:7050 \
-        --ordererTLSHostnameOverride orderer.example.com --tls \
-        --cafile $ORDERER_CA
-}
+#     peer channel getinfo  -c mychannel -o localhost:7050 \
+#         --ordererTLSHostnameOverride orderer.example.com --tls \
+#         --cafile $ORDERER_CA
+# }
 
 checkCommitReadyness() {
     setGlobalsForPeer0Org1

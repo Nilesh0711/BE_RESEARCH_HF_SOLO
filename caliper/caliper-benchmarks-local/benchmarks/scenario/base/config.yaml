@@ -8,7 +8,7 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 40
+          tps: 10
       workload:
         module: benchmarks/scenario/base/createCar.js
 
@@ -31,7 +31,6 @@ test:
           tps: 40
       workload:
         module: benchmarks/scenario/base/update.js
-
 
     - label: Transfer Car
       description: Test description for the Transfer performance of the deployed contract.
